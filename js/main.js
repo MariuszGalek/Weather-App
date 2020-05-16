@@ -16,8 +16,7 @@ let city;
 let url;
 
 const getWeather = () => {
-    //city = input.value;
-    city = 'London';
+    city = (!input.value) ? 'Kraków' : input.value;
     url = apiLink + city + apiKey + units;
 
     axios.get(url)
@@ -30,6 +29,8 @@ const getWeather = () => {
             weather.textContent = status.main
             temperature.textContent = Math.floor(temp) + '°C';
             humidity.textContent = hum + "%";
+            warning.textContent = '';
+            input.value = '';
 
             if (status.id >= 200 && status.id < 300) {
                 photo.setAttribute('src', './images/thunderstorm.png')
@@ -41,17 +42,25 @@ const getWeather = () => {
                 photo.setAttribute('src', './images/ice.png')
             } else if (status.id >= 700 && status.id < 800) {
                 photo.setAttribute('src', './images/fog.png')
-            } else if (status.id == 800) {
+            } else if (status.id === 800) {
                 photo.setAttribute('src', './images/sun.png')
             } else if (status.id >= 801 && status.id < 900) {
                 photo.setAttribute('src', './images/cloud.png')
             } else {
                 photo.setAttribute('src', './images/unknown.png')
             }
-
-            console.log(res.data.weather);
-            console.log(status.id);
         })
+        .catch(() => warning.textContent = "Enter correct city name!")
 };
 
-getWeather()
+const enterCheck = () => {
+    if (event.keyCode === 13 && input.value != '') {
+        getWeather();
+    }
+};
+
+getWeather();
+btn.addEventListener('click', function() {
+    if (input.value.length !== 0) {getWeather()}
+});
+input.addEventListener('keyup', enterCheck);
